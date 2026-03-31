@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SOUMITRA AI | Unleash Imagination</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root{--bg-dark:#020408;--glass:rgba(255,255,255,0.03);--glass-border:rgba(255,255,255,0.15);--teal:#00f2ea;--blue:#2f6bff;--violet:#9d4edd;--red-premium:#ff3333;--green-neon:#00ff88;--text-main:#ffffff}
+*{box-sizing:border-box;outline:none;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:'Rajdhani',sans-serif;color:var(--text-main);background-color:var(--bg-dark);overflow-x:hidden;min-height:100vh;background-image:linear-gradient(rgba(0,0,0,0.5),rgba(0,0,0,0.7)),url('bg.png');background-size:cover;background-attachment:fixed;background-position:center}
+@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+@keyframes float{0%,100%{transform:translateY(0px)}50%{transform:translateY(-10px)}}
+@keyframes clickGlow{0%{box-shadow:0 0 0px transparent;filter:brightness(1)}50%{box-shadow:0 0 40px var(--teal);filter:brightness(1.5);border-color:var(--teal)}100%{box-shadow:0 0 0px transparent;filter:brightness(1)}}
+@keyframes blink{50%{opacity:0}}
+.float-anim{animation:float 5s ease-in-out infinite}
+.glow-active{animation:clickGlow 0.4s ease-out !important}
+.spinning{animation:spin 1s linear infinite;pointer-events:none;opacity:0.8}
+.btn-loader{width:20px;height:20px;border:3px solid rgba(255,255,255,0.3);border-top:3px solid #fff;border-radius:50%;animation:spin 1s linear infinite;display:inline-block}
+
+/* --- NAVBAR --- */
+.navbar{display:flex;justify-content:space-between;align-items:center;padding:0 15px;height:70px;background:rgba(2,4,8,0.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--glass-border);position:sticky;top:0;z-index:1000}
+.brand{font-family:'Orbitron';font-size:20px;font-weight:800;background:linear-gradient(90deg,#fff,var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:1px}
+.btn-login{background:linear-gradient(90deg,var(--blue),var(--violet));border:none;padding:0 12px;height:32px;border-radius:50px;color:#fff;font-family:'Orbitron';font-size:11px;cursor:pointer;display:flex;align-items:center;gap:6px;transition:0.3s;box-shadow:0 0 10px rgba(157,78,221,0.3);max-width:130px;overflow:hidden;white-space:nowrap}
+.user-avatar{width:20px !important;height:20px !important;border-radius:50%;border:1px solid #fff;object-fit:cover;flex-shrink:0}
+
+/* --- SIDEBAR --- */
+.sidebar{position:fixed;top:0;left:0;width:80px;height:100vh;background:rgba(0,0,0,0.9);border-right:1px solid var(--glass-border);display:flex;flex-direction:column;align-items:center;padding-top:90px;z-index:900;backdrop-filter:blur(10px);gap:15px;overflow-y:auto;transition:0.3s;transform:translateX(-100%)}
+.history-thumb{width:50px;height:50px;border-radius:8px;border:1px solid var(--glass-border);background-size:cover;background-position:center;cursor:pointer;transition:0.3s}
+.history-thumb:hover{border-color:var(--teal);box-shadow:0 0 10px rgba(0,242,234,0.3)}
+
+/* --- DESKTOP LAYOUT FIX --- */
+#mainContent {transition: margin-left 0.3s;width: 100%;}
+@media (min-width:768px){
+    .sidebar{transform:translateX(0)}
+    #mainContent {margin-left: 80px; width: calc(100% - 80px);}
+}
+
+/* --- HERO & SEARCH --- */
+.hero{text-align:center;padding:80px 20px 40px;min-height:400px;transition:0.3s}
+#descText{min-height:40px;font-size:16px;margin-bottom:30px;color:#ffffff;font-weight:700;text-shadow:0 2px 5px #000000;letter-spacing:0.5px}
+#descText::after{content:'|';animation:blink 0.7s infinite;color:var(--teal)}
+
+.search-wrapper{max-width:650px;margin:0 auto;position:relative}
+.search-box{position:relative;border-radius:16px;padding:5px;box-shadow:0 0 30px rgba(0,0,0,0.5);overflow:hidden;z-index:1;background:#000}
+.search-box::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:conic-gradient(transparent 40%,transparent 80%,var(--teal) 85%,var(--blue) 90%,var(--violet) 95%);animation:spin 6s linear infinite;z-index:-2}
+.search-box::after{content:'';position:absolute;inset:5px;background:rgba(2,4,8,0.95);border-radius:14px;z-index:-1}
+.input-group{display:flex;gap:10px;margin-bottom:15px;align-items:center;position:relative;z-index:2;padding:12px}
+.search-box input{flex:1;background:transparent;border:none;color:#fff;font-size:16px;font-family:'Rajdhani';font-weight:600;padding-left:5px}
+.btn-gen{width:50px;height:50px;border-radius:50%;background:var(--teal);border:none;color:#000;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:0.3s;flex-shrink:0}
+.controls-row{display:flex;flex-direction:column;gap:10px;padding:10px 12px;border-top:1px solid rgba(255,255,255,0.1);width:100%;position:relative;z-index:2}
+.control-group{display:flex;gap:10px;align-items:center;width:100%}
+.control-label{font-size:12px;color:var(--text-muted);font-weight:bold;min-width:45px}
+.option-btn{background:rgba(255,255,255,0.05);border:1px solid var(--glass-border);color:var(--text-muted);padding:5px 12px;border-radius:4px;font-size:11px;cursor:pointer;font-family:'Orbitron';transition:0.2s}
+.option-btn.active{background:var(--teal);color:#000;border-color:var(--teal);font-weight:bold}
+
+/* --- RESULTS --- */
+#results-area{display:flex;flex-wrap:wrap;justify-content:center;gap:15px;padding:20px;max-width:1200px;margin:0 auto}
+.result-card{position:relative;background:#000;border-radius:12px;overflow:hidden;border:1px solid var(--glass-border);transition:0.3s;background-size:cover;background-position:center;box-shadow:0 0 20px rgba(0,0,0,0.5)}
+.size-1-1{width:300px;height:300px}.size-16-9{width:320px;height:180px}.size-4-3{width:320px;height:240px}
+.blur-overlay{position:absolute;top:0;left:0;width:100%;height:100%;backdrop-filter:blur(30px);transition:backdrop-filter 0.1s linear}
+.download-btn{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(0.9);width:60px;height:60px;border-radius:50%;background:rgba(0,242,234,0.15);border:1px solid var(--teal);color:var(--teal);font-size:24px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 0 20px rgba(0,242,234,0.4);opacity:0;backdrop-filter:blur(5px);transition:all 0.3s;z-index:10}
+.result-card:hover .download-btn{opacity:1;transform:translate(-50%,-50%) scale(1)}
+.download-btn:hover{background:var(--teal);color:#000;box-shadow:0 0 40px var(--teal)}
+
+.grid-section{max-width:900px;margin:60px auto;padding:0 20px;display:grid;grid-template-columns:repeat(2,1fr);gap:15px;transition:0.3s}
+.grid-item{aspect-ratio:3/4;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.2);border-radius:12px;cursor:pointer;position:relative;overflow:hidden;background-size:cover;background-position:center}
+.grid-item:nth-child(1){background-image:url('1image.jpg')}.grid-item:nth-child(2){background-image:url('2image.jpg')}.grid-item:nth-child(3){background-image:url('3image.jpg')}.grid-item:nth-child(4){background-image:url('4image.jpg')}.grid-item:nth-child(5){background-image:url('5image.jpg')}.grid-item:nth-child(6){background-image:url('6image.jpg')}
+
+.shattered-wrapper{margin:80px 0 120px;text-align:center;padding:0 10px;transition:0.3s}
+.fan-text-container{margin-bottom:25px;min-height:80px;width:100%;padding:0 5px}
+.fan-bold-text{font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:700;line-height:1.5;color:#ffffff;text-shadow:0 2px 6px #000000}
+#fanTypewriter::after{content:'|';animation:blink 0.7s infinite;color:var(--teal)}
+.fan-design-container{max-width:800px;margin:0 auto;animation:float 6s ease-in-out infinite alternate}
+.fan-design-img{width:100%;height:auto;display:block;filter:drop-shadow(0 0 20px rgba(0,0,0,0.5));cursor:pointer;transition:0.3s}
+.btn-create{background:linear-gradient(90deg,var(--blue),var(--violet));color:#fff;padding:14px 40px;font-size:16px;border:none;border-radius:8px;font-family:'Orbitron';text-transform:uppercase;letter-spacing:2px;cursor:pointer;box-shadow:0 0 20px rgba(157,78,221,0.4);margin-top:40px}
+
+/* --- PRICING SECTION --- */
+.pricing{padding:60px 20px;max-width:1100px;margin:0 auto;transition:0.3s}
+.price-grid{display:grid;grid-template-columns:1fr;gap:30px}
+@media (min-width: 900px){.price-grid{grid-template-columns:repeat(3,1fr); gap: 20px;}}
+.price-card{position:relative;border-radius:16px;padding:3px;text-align:center;transition:0.3s;overflow:hidden;z-index:1;box-shadow:0 0 15px rgba(0,0,0,0.5);cursor:pointer}
+.price-card::after{content:'';position:absolute;inset:3px;background:rgba(10,12,20,0.8);border-radius:14px;z-index:-1;backdrop-filter:blur(20px);box-shadow:inset 0 0 20px rgba(255,255,255,0.05)}
+.price-card::before{content:'';position:absolute;inset:3px;z-index:-1;background:linear-gradient(135deg,rgba(255,255,255,0.1) 0%,transparent 40%);border-radius:14px}
+.snake-layer{position:absolute;top:-50%;left:-50%;width:200%;height:200%;animation:spin 3s linear infinite;z-index:-2}
+.type-free .snake-layer{background:conic-gradient(transparent,transparent,transparent,var(--teal))}
+.type-pro .snake-layer{background:conic-gradient(transparent,transparent,transparent,var(--blue))}
+.type-ultra .snake-layer{background:conic-gradient(transparent,transparent,transparent,var(--violet))}
+.price-content{position:relative;z-index:2;padding:35px 20px} 
+.price-tag{font-size:36px;font-weight:bold;margin:15px 0;font-family:'Orbitron'}
+.btn-plan{width:100%;padding:14px;margin-top:20px;background:transparent;border:1px solid var(--glass-border);color:#fff;border-radius:6px;cursor:pointer;font-family:'Orbitron';transition:0.3s;text-transform:uppercase;font-size:15px;letter-spacing:1px}
+.btn-plan:hover{box-shadow:0 0 20px currentColor;border-color:currentColor}
+.btn-cancel-mode{border-color:var(--red-premium)!important;color:var(--red-premium)!important;background:rgba(255,51,51,0.1)!important}
+.btn-cancel-mode:hover{background:rgba(255,51,51,0.2)!important;box-shadow:0 0 20px var(--red-premium)!important}
+.disclaimer-box{margin-top:50px;text-align:center;color:#fff;font-weight:700;text-shadow:0 2px 4px #000;font-size:13px;padding:20px;border-top:1px solid #333;line-height:1.6}
+
+/* --- POPUP --- */
+.bottom-sheet-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:998;display:none;backdrop-filter:blur(5px)}
+.bottom-sheet{position:fixed;bottom:0;left:0;width:100%;background:linear-gradient(180deg,#0a0a12 0%,#000 100%);border-top:1px solid var(--violet);border-radius:25px 25px 0 0;padding:30px;z-index:999;transform:translateY(100%);transition:transform 0.4s cubic-bezier(0.33,1,0.68,1);box-shadow:0 -10px 40px rgba(157,78,221,0.3);max-height:85vh;overflow-y:auto;touch-action:none}
+.sheet-active{transform:translateY(0)}
+.drag-handle{width:60px;height:5px;background:#333;margin:0 auto 20px;border-radius:5px;cursor:grab}
+.duration-btn{flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);padding:15px;border-radius:12px;color:#888;cursor:pointer;transition:0.3s;display:flex;flex-direction:column;align-items:center;font-family:'Orbitron'}
+.duration-btn.selected{background:rgba(0,242,234,0.1);border-color:var(--teal);box-shadow:0 0 15px rgba(0,242,234,0.2)}
+.duration-btn b{font-size:20px;color:#fff;margin-bottom:2px}.duration-btn.selected b{color:var(--teal)}
+.gateway-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:25px 0}
+.gateway-btn{background:#151520;border:1px solid rgba(255,255,255,0.1);border-radius:10px;height:55px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.gateway-btn.selected{border-color:var(--violet);background:rgba(157,78,221,0.15);box-shadow:0 0 15px rgba(157,78,221,0.2)}
+.pay-input{width:100%;background:#050505;border:1px solid #333;padding:15px;margin-bottom:15px;color:#fff;border-radius:8px;font-family:'Rajdhani';font-size:17px;font-weight:600;transition:0.2s}
+.pay-input:focus{border-color:var(--teal)}
+.input-error{border-color:var(--red-premium)!important;box-shadow:0 0 5px var(--red-premium) inset}
+.btn-pay-confirm{width:100%;padding:15px;background:linear-gradient(90deg,var(--teal),var(--blue));border:none;border-radius:8px;color:#000;font-weight:bold;font-size:18px;cursor:pointer;margin-top:10px;font-family:'Orbitron';transition:0.3s}
+.btn-pay-confirm.granted{background:transparent;border:1px solid var(--green-neon);color:var(--green-neon);box-shadow:0 0 20px var(--green-neon);cursor:default}
+.warning-box{color:var(--red-premium);text-align:center;font-size:14px;margin-top:10px;display:none;font-weight:bold;font-family:'Orbitron'}
+.modal-overlay-login{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);backdrop-filter:blur(15px);display:none;justify-content:center;align-items:center;z-index:1000}
+.modal-box{background:rgba(10,20,35,0.95);border:1px solid rgba(0,242,234,0.5);padding:40px 30px;border-radius:20px;width:90%;max-width:380px;text-align:center;box-shadow:0 0 50px rgba(0,242,234,0.2);transform:scale(0.9);animation:fadeIn 0.3s forwards}
+.auth-btn{width:100%;padding:12px;margin:12px 0;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:#fff;display:flex;align-items:center;justify-content:center;gap:10px;cursor:pointer;border-radius:50px;font-size:15px;font-weight:bold}
+.btn-cancel{background:none;border:none;color:var(--text-muted);margin-top:20px;font-size:13px;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="sidebar" id="historySidebar">
+    </div>
+<nav class="navbar"><div class="brand">SOUMITRA</div><button class="btn-login" id="authBtn">LOGIN</button></nav>
+
+<div id="mainContent">
+    <section class="hero" id="searchSection">
+        <h1>SOUMITRA AI |<br><span style="color:var(--violet)">Unleash Imagination</span></h1>
+        <div id="descText"></div>
+        <div class="search-box">
+            <div class="input-group">
+                <input type="text" id="promptInput" placeholder="Describe your image...">
+                <button class="btn-gen" id="generateBtn"><i class="fa-solid fa-play"></i></button>
+            </div>
+            <div class="controls-row">
+                <div class="control-group" id="ratioGroup"><span class="control-label">Ratio:</span><button class="option-btn active" onclick="setRatio(this,'1:1')">1:1</button><button class="option-btn" onclick="setRatio(this,'16:9')">16:9</button><button class="option-btn" onclick="setRatio(this,'4:3')">4:3</button></div>
+                <div class="control-group" id="countGroup"><span class="control-label">Count:</span><button class="option-btn active" onclick="setCount(this,1)">1</button><button class="option-btn" onclick="setCount(this,2)">2</button><button class="option-btn" onclick="setCount(this,3)">3</button><button class="option-btn" onclick="setCount(this,4)">4</button></div>
+            </div>
+        </div>
+    </section>
+    <section id="results-area"></section>
+    <section class="grid-section"><div class="grid-item" onclick="glowEffect(this)"></div><div class="grid-item" onclick="glowEffect(this)"></div><div class="grid-item" onclick="glowEffect(this)"></div><div class="grid-item" onclick="glowEffect(this)"></div><div class="grid-item" onclick="glowEffect(this)"></div><div class="grid-item" onclick="glowEffect(this)"></div></section>
+    <section class="shattered-wrapper" id="fanSection"><div class="fan-text-container"><h2 id="fanTypewriter" class="fan-bold-text"></h2></div><div class="fan-design-container"><img src="fan-design.png" alt="Fan" class="fan-design-img" onclick="glowEffect(this)"></div><button class="btn-create" onclick="scrollToSearch()">START CREATING</button></section>
+    
+    <section class="pricing">
+        <div class="price-grid">
+            <div class="price-card type-free" onclick="handleCardClick('free')"><div class="snake-layer"></div><div class="price-content"><h3 style="color:var(--teal)">Free</h3><div class="price-tag">$0<span style="font-size:14px;color:#888">/mo</span></div><ul style="list-style:none;padding:0;color:#ccc;text-align:left;line-height:2;font-size:16px"><li><i class="fa-solid fa-check" style="color:var(--teal)"></i> 10 Images/Day</li><li><i class="fa-solid fa-check" style="color:var(--teal)"></i> 720p Quality</li><li><i class="fa-solid fa-check" style="color:var(--teal)"></i> Watermark Included</li><li style="color:#ff4d4d"><i class="fa-solid fa-xmark"></i> Support</li></ul><button class="btn-plan" id="btnFree" style="color:var(--teal)">Get Started</button></div></div>
+            <div class="price-card type-pro" onclick="handleCardClick('pro')"><div class="snake-layer"></div><div class="price-content"><h3 style="color:var(--blue)">Pro</h3><div class="price-tag">$20<span style="font-size:14px;color:#888">/2mo</span></div><ul style="list-style:none;padding:0;color:#ccc;text-align:left;line-height:2;font-size:16px"><li><i class="fa-solid fa-check" style="color:var(--blue)"></i> 20 Images/Day</li><li><i class="fa-solid fa-check" style="color:var(--blue)"></i> 2K Resolution</li><li><i class="fa-solid fa-check" style="color:var(--blue)"></i> No Watermark</li><li><i class="fa-solid fa-check" style="color:var(--blue)"></i> 2 Month Access</li></ul><button class="btn-plan" id="btnPro" style="color:var(--blue)">Get Started</button></div></div>
+            <div class="price-card type-ultra" onclick="handleCardClick('ultra')"><div class="snake-layer"></div><div class="price-content"><h3 style="color:var(--violet)">Ultra</h3><div class="price-tag">$30<span style="font-size:14px;color:#888">/2mo</span></div><ul style="list-style:none;padding:0;color:#ccc;text-align:left;line-height:2;font-size:16px"><li><i class="fa-solid fa-check" style="color:var(--violet)"></i> 30 Images/Day</li><li><i class="fa-solid fa-check" style="color:var(--violet)"></i> 4K Ultra HD</li><li><i class="fa-solid fa-check" style="color:var(--violet)"></i> No Watermark</li><li><i class="fa-solid fa-check" style="color:var(--violet)"></i> 2 Month Access</li><li><i class="fa-solid fa-check" style="color:var(--violet)"></i> 24/7 Support</li></ul><button class="btn-plan" id="btnUltra" style="color:var(--violet)">Get Started</button></div></div>
+        </div>
+        <div class="disclaimer-box"><i class="fa-solid fa-circle-info"></i> <strong>DISCLAIMER:</strong> This demo uses a Free Public API. Pricing and features are simulated for UI/UX demonstration purposes.</div>
+    </section>
+</div>
+
+<div class="bottom-sheet-overlay" id="sheetOverlay" onclick="closeSheet()"></div>
+<div class="bottom-sheet" id="paymentSheet">
+    <div style="text-align:center;margin-bottom:20px;" id="sheetHeader">
+        <div class="drag-handle"></div>
+        <h2 id="planTitle" style="font-family:'Orbitron';color:#fff;margin:0">Pro Access</h2>
+        <div id="planWarning" style="color:#ff3333;font-size:13px;display:none;margin-top:10px;"><i class="fa-solid fa-triangle-exclamation"></i> PLEASE CANCEL CURRENT PLAN FIRST</div>
+    </div>
+    <div id="activePlanView" style="display:none;text-align:center;">
+        <p style="color:#ccc;margin-bottom:20px;">You are currently subscribed to this plan.</p>
+        <button class="btn-pay-confirm" style="background:#ff3333;color:#fff;" onclick="cancelCurrentPlan()"><i class="fa-solid fa-xmark"></i> CANCEL SUBSCRIPTION</button>
+    </div>
+    <div id="paymentView">
+        <div style="display:flex;gap:15px;margin-bottom:30px;"><div class="duration-btn selected" id="btnMo" onclick="selectDuration('mo')"><b id="priceMo">$20</b><span>2 MONTHS</span></div><div class="duration-btn" id="btnYr" onclick="selectDuration('yr')"><b id="priceYr">$200</b><span>1 YEAR</span></div></div>
+        <div style="font-size:11px;color:#aaa;margin-bottom:10px;font-weight:bold;letter-spacing:1px">SELECT METHOD</div>
+        <div class="gateway-grid"><div class="gateway-btn selected" onclick="setGateway(this,'paypal')"><i class="fa-brands fa-paypal" style="color:#0070ba;font-size:24px"></i></div><div class="gateway-btn" onclick="setGateway(this,'visa')"><i class="fa-brands fa-cc-visa" style="color:#fff;font-size:24px"></i></div><div class="gateway-btn" onclick="setGateway(this,'bitcoin')"><i class="fa-brands fa-bitcoin" style="color:#f2a900;font-size:24px"></i></div><div class="gateway-btn" onclick="setGateway(this,'payoneer')"><i class="fa-solid fa-wallet" style="color:#ff0055;font-size:24px"></i></div></div>
+        <div id="paymentForm"></div>
+        <div class="warning-box" id="fieldWarning"><i class="fa-solid fa-circle-exclamation"></i> Invalid Details</div>
+        <button class="btn-pay-confirm" id="payNowBtn" onclick="processPayment()">PAY NOW</button>
+    </div>
+</div>
+<div class="modal-overlay-login" id="loginModal"><div class="modal-box"><h3>Access Portal</h3><button class="auth-btn" id="googleLoginBtn"><i class="fa-brands fa-google" style="color:#ea4335"></i> Continue with Google</button><button class="btn-cancel" onclick="closeLogin()">CANCEL ACCESS</button></div></div>
+<div class="modal-overlay-login" id="logoutModal"><div class="modal-box"><h3>System Logout</h3><p style="color:#ccc;margin-bottom:20px;">Exit Session?</p><button class="auth-btn" id="confirmLogoutBtn" style="border-color:#ff4d4d;color:#ff4d4d;">LOGOUT NOW</button><button class="btn-cancel" onclick="closeLogout()">CANCEL</button></div></div>
+
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import {getAuth,GoogleAuthProvider,signInWithPopup,onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+const firebaseConfig={apiKey:"AIzaSyA4Bk9qHkfV5l8uXRmAabj2Tmly5gTMgZw",authDomain:"soumitraai.firebaseapp.com",projectId:"soumitraai",storageBucket:"soumitraai.firebasestorage.app",messagingSenderId:"670952009324",appId:"1:670952009324:web:2877ffa93c6fee3559b249"};
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const provider=new GoogleAuthProvider();
+
+const promptInput=document.getElementById('promptInput');
+const resultsArea=document.getElementById('results-area');
+const historyBar=document.getElementById('historySidebar');
+const authBtn=document.getElementById('authBtn');
+const loginModal=document.getElementById('loginModal');
+const logoutModal=document.getElementById('logoutModal');
+const genBtn=document.getElementById('generateBtn');
+
+let currentRatio="1:1",currentCount=1,width=1080,height=1080;
+let isGenerating=false,isPaused=false;
+
+// null means NO plan is active (User is logged out)
+let currentPlan=null; 
+let selectedCardPlan='';
+
+function updatePlanButtons(){
+    const btns={free:document.getElementById('btnFree'),pro:document.getElementById('btnPro'),ultra:document.getElementById('btnUltra')};
+    
+    // Reset all buttons to "Get Started" state
+    Object.keys(btns).forEach(key=>{
+        const btn=btns[key];
+        btn.innerHTML="Get Started";
+        btn.classList.remove('btn-cancel-mode');
+        if(key==='free')btn.style.color="var(--teal)";
+        if(key==='pro')btn.style.color="var(--blue)";
+        if(key==='ultra')btn.style.color="var(--violet)";
+        btn.style.background="transparent";
+        btn.style.borderColor="var(--glass-border)";
+    });
+    
+    // If a plan is active (User is logged in), style the active button
+    if(currentPlan) {
+        const activeBtn=btns[currentPlan];
+        if(currentPlan==='free'){
+            activeBtn.innerHTML=`<i class="fa-solid fa-check"></i> Current Plan`;
+            activeBtn.style.background="var(--teal)";
+            activeBtn.style.color="#000";
+            activeBtn.style.borderColor="var(--teal)";
+        } else {
+            activeBtn.innerHTML=`<i class="fa-solid fa-xmark"></i> Cancel Plan`;
+            activeBtn.classList.add('btn-cancel-mode');
+        }
+    }
+}
+
+window.handleCardClick=(plan)=>{
+    // 1. Logged Out State -> Click Any Plan -> Show Login
+    if(!auth.currentUser){ 
+        openLogin(); 
+        return; 
+    }
+    
+    selectedCardPlan=plan;
+    const sheet=document.getElementById('paymentSheet');
+    const overlay=document.getElementById('sheetOverlay');
+    const paymentView=document.getElementById('paymentView');
+    const activeView=document.getElementById('activePlanView');
+    const warning=document.getElementById('planWarning');
+    
+    document.getElementById('planTitle').innerText=plan.charAt(0).toUpperCase()+plan.slice(1)+" Access";
+    warning.style.display="none";
+    resetPaymentBtn(); 
+    
+    if(plan===currentPlan){
+        // Clicking on an already active plan
+        if(plan==='free')return;
+        paymentView.style.display='none';
+        activeView.style.display='block';
+    } else if(currentPlan!=='free' && currentPlan!==null && plan!=='free'){
+        // Switching between paid plans
+        paymentView.style.display='block';
+        activeView.style.display='none';
+        renderInputs('paypal');
+        document.getElementById('payNowBtn').disabled=true;
+        warning.style.display="block";
+    } else {
+        // Buying a new plan
+        paymentView.style.display='block';
+        activeView.style.display='none';
+        const pM=plan==='pro'?20:30;
+        const pY=plan==='pro'?200:300;
+        document.getElementById('priceMo').innerText="$"+pM;
+        document.getElementById('priceYr').innerText="$"+pY;
+        document.getElementById('btnMo').click();
+        renderInputs('paypal');
+    }
+    document.body.style.overflow='hidden';
+    overlay.style.display='block';
+    setTimeout(()=>sheet.classList.add('sheet-active'),10);
+};
+
+window.cancelCurrentPlan=()=>{
+    const btn=document.querySelector('#activePlanView button');
+    btn.innerHTML=`<div class="btn-loader"></div> Canceling...`;
+    setTimeout(()=>{
+        currentPlan='free';
+        updatePlanButtons();
+        closeSheet();
+    },1500);
+};
+
+window.processPayment=()=>{
+    if(document.getElementById('payNowBtn').disabled)return;
+    const inputs=document.querySelectorAll('.pay-input');
+    let isValid=true;
+    inputs.forEach(input=>{
+        let val = input.value.trim();
+        let type = input.getAttribute('placeholder');
+        let inputValid = true;
+        if(!val) inputValid = false;
+        else if(type==='Email'&&!/^\S+@\S+\.\S+$/.test(val)) inputValid = false;
+        else if(type==='Card No'&&!/^\d{16}$/.test(val.replace(/\s/g,''))) inputValid = false;
+        else if(type==='CVV'&&!/^\d{3,4}$/.test(val)) inputValid = false;
+        else if(type==='Wallet Address'&&val.length<10) inputValid = false;
+
+        if(!inputValid){
+            input.classList.add('input-error');
+            isValid=false;
+        } else {
+            input.classList.remove('input-error');
+        }
+    });
+    
+    if(!isValid){
+        document.getElementById('fieldWarning').style.display='block';
+        return;
+    } else {
+        document.getElementById('fieldWarning').style.display='none';
+    }
+    
+    const btn=document.getElementById('payNowBtn');
+    btn.innerHTML=`<div class="btn-loader"></div>`;
+    btn.style.background="#333";
+    setTimeout(()=>{
+        btn.className="btn-pay-confirm granted";
+        btn.innerHTML=`<i class="fa-solid fa-shield-halved"></i> ACCESS GRANTED`;
+        setTimeout(()=>{
+            currentPlan=selectedCardPlan;
+            updatePlanButtons();
+            closeSheet();
+        },2000);
+    },2000);
+};
+
+window.resetPaymentBtn=()=>{
+    const btn=document.getElementById('payNowBtn');
+    btn.disabled=false;
+    btn.className="btn-pay-confirm";
+    btn.innerHTML="PAY NOW";
+    btn.style.background="linear-gradient(90deg,var(--teal),var(--blue))";
+    document.getElementById('fieldWarning').style.display='none';
+    document.querySelectorAll('.pay-input').forEach(i=>{
+        i.value='';
+        i.classList.remove('input-error');
+    });
+};
+
+let startY=0;
+const sheet=document.getElementById('paymentSheet');
+sheet.addEventListener('touchstart',(e)=>{startY=e.touches[0].clientY});
+sheet.addEventListener('touchmove',(e)=>{
+    if(sheet.scrollTop===0&&e.touches[0].clientY-startY>0){
+        e.preventDefault();
+        sheet.style.transform=`translateY(${e.touches[0].clientY-startY}px)`;
+    }
+});
+sheet.addEventListener('touchend',(e)=>{
+    if(sheet.scrollTop===0&&e.changedTouches[0].clientY-startY>100){
+        closeSheet();
+        sheet.style.transform='';
+    } else {
+        sheet.style.transform='';
+    }
+});
+
+window.closeSheet=()=>{
+    document.body.style.overflow='auto';
+    document.getElementById('paymentSheet').classList.remove('sheet-active');
+    setTimeout(()=>document.getElementById('sheetOverlay').style.display='none',400);
+};
+updatePlanButtons(); // Initial load (Logged out state)
+
+window.openLogin=()=>loginModal.style.display='flex';
+window.closeLogin=()=>loginModal.style.display='none';
+window.openLogout=()=>logoutModal.style.display='flex';
+window.closeLogout=()=>logoutModal.style.display='none';
+
+document.getElementById('googleLoginBtn').onclick=()=>{
+    signInWithPopup(auth,provider).then(()=>closeLogin()).catch(e=>closeLogin());
+};
+document.getElementById('confirmLogoutBtn').onclick=()=>{
+    signOut(auth).then(()=>closeLogout());
+};
+
+// --- AUTH STATE LISTENER ---
+onAuthStateChanged(auth,(user)=>{
+    if(user){
+        authBtn.innerHTML=`<img src="${user.photoURL}" class="user-avatar"> ${user.displayName.substring(0,6)}..`;
+        authBtn.style.background="rgba(255,255,255,0.1)";
+        authBtn.style.border="1px solid var(--teal)";
+        authBtn.onclick=openLogout;
+        
+        // Setup default plan upon login
+        if(!currentPlan) {
+            currentPlan = 'free'; 
+            updatePlanButtons();
+        }
+    }else{
+        authBtn.innerText="Login";
+        authBtn.style.background="linear-gradient(90deg,var(--blue),var(--violet))";
+        authBtn.style.border="none";
+        authBtn.onclick=openLogin;
+        
+        // Reset state on logout
+        currentPlan = null; 
+        updatePlanButtons();
+    }
+});
+
+async function handleGenerateClick(){
+    if(!auth.currentUser){openLogin();return}
+    if(isGenerating){
+        isPaused=!isPaused;
+        genBtn.style.color=isPaused?"#ff4d4d":"#000";
+        return;
+    }
+    const prompt=promptInput.value.trim();
+    if(!prompt)return;
+    isGenerating=true;
+    isPaused=false;
+    genBtn.classList.add('spinning');
+    let completedImages = 0; 
+    
+    Array.from(resultsArea.children).forEach(child=>{
+        const bg=child.style.backgroundImage;
+        if(bg){addToHistory(bg.slice(5,-2))}
+    });
+    resultsArea.innerHTML="";
+    
+    for(let i=0;i<currentCount;i++){
+        const keyword = encodeURIComponent(prompt.split(' ')[0]);
+        const imageUrl=`https://loremflickr.com/${width}/${height}/${keyword}?lock=${Math.floor(Math.random()*1000)}`;
+        const div=document.createElement('div');
+        div.className=`result-card size-${currentRatio.replace(':','-')}`;
+        div.innerHTML=`<div class="blur-overlay" style="backdrop-filter:blur(30px)"></div><button class="download-btn" onclick="downloadImg('${imageUrl}')"><i class="fa-solid fa-arrow-down"></i></button>`;
+        div.style.backgroundImage=`url('${imageUrl}')`;
+        resultsArea.appendChild(div);
+        
+        let blur=30;
+        let timer=setInterval(()=>{
+            if(!isPaused){
+                blur-=2;
+                div.querySelector('.blur-overlay').style.backdropFilter=`blur(${blur}px)`;
+                if(blur<=0){
+                    clearInterval(timer);
+                    div.querySelector('.blur-overlay').style.display='none';
+                    completedImages++;
+                    if(completedImages === currentCount) { 
+                        isGenerating=false;
+                        genBtn.classList.remove('spinning'); 
+                    }
+                }
+            }
+        },20);
+    }
+}
+
+window.downloadImg=async(url)=>{
+    try{
+        const r=await fetch(url);
+        const b=await r.blob();
+        const l=document.createElement("a");
+        l.href=URL.createObjectURL(b);
+        l.download=`Soumitra-AI.jpg`;
+        document.body.appendChild(l);
+        l.click();
+        document.body.removeChild(l);
+    }catch(e){}
+};
+
+function addToHistory(url){
+    const t=document.createElement('div');
+    t.className='history-thumb';
+    t.style.backgroundImage=`url('${url}')`;
+    historyBar.appendChild(t); // Append at the end since label is removed
+    t.onclick=()=>{
+        resultsArea.innerHTML="";
+        const d=document.createElement('div');
+        d.className='result-card';
+        d.style.backgroundImage=`url('${url}')`;
+        d.innerHTML=`<button class="download-btn" onclick="downloadImg('${url}')"><i class="fa-solid fa-arrow-down"></i></button>`;
+        resultsArea.appendChild(d);
+    }
+}
+
+window.selectDuration=(t)=>{
+    document.getElementById('btnMo').classList.toggle('selected',t==='mo');
+    document.getElementById('btnYr').classList.toggle('selected',t==='yr'); 
+    document.getElementById('priceMo').style.color = t==='mo' ? 'var(--teal)' : '#fff'; 
+    document.getElementById('priceYr').style.color = t==='yr' ? 'var(--teal)' : '#fff';
+}
+
+window.setGateway=(btn,t)=>{
+    document.querySelectorAll('.gateway-btn').forEach(b=>b.classList.remove('selected'));
+    btn.classList.add('selected');
+    renderInputs(t);
+}
+
+function renderInputs(t){
+    const f=document.getElementById('paymentForm');
+    f.innerHTML='';
+    if(t==='paypal'||t==='payoneer'){
+        f.innerHTML=`<input class="pay-input" type="email" placeholder="Email"><input type="password" class="pay-input" placeholder="Password">`;
+    } else if(t==='visa'){
+        f.innerHTML=`<input class="pay-input" type="text" maxlength="16" placeholder="Card No"><div style="display:flex;gap:10px"><input class="pay-input" type="text" maxlength="5" placeholder="MM/YY"><input class="pay-input" type="password" maxlength="4" placeholder="CVV"></div>`;
+    } else {
+        f.innerHTML=`<input class="pay-input" type="text" placeholder="Wallet Address">`;
+    }
+    document.querySelectorAll('.pay-input').forEach(inp=>{
+        inp.addEventListener('input',()=>{
+            inp.classList.remove('input-error');
+            document.getElementById('fieldWarning').style.display='none';
+        })
+    });
+}
+
+window.setRatio=(btn,r)=>{
+    document.querySelectorAll('#ratioGroup .option-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    currentRatio=r;
+    if(r==='1:1'){width=1080;height=1080;}
+    if(r==='16:9'){width=1920;height=1080;}
+    if(r==='4:3'){width=1600;height=1200;}
+};
+
+window.setCount=(btn,c)=>{
+    document.querySelectorAll('#countGroup .option-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    currentCount=c;
+};
+
+window.scrollToSearch=()=>document.getElementById('searchSection').scrollIntoView({behavior:'smooth'});
+
+window.glowEffect=(el)=>{
+    el.classList.add('glow-active');
+    setTimeout(()=>el.classList.remove('glow-active'),400);
+};
+
+genBtn.addEventListener('click',handleGenerateClick);
+promptInput.addEventListener('keypress',(e)=>{
+    if(e.key==='Enter')handleGenerateClick();
+});
+
+const heroText="Create with precision. Experience cinematic realism. Designed for professionals.";
+const heroContainer=document.getElementById('descText');
+let hIndex=0;
+const hWords=heroText.split(' ');
+function typeHero(){
+    if(hIndex<hWords.length){
+        heroContainer.innerHTML+=hWords[hIndex]+" ";
+        hIndex++;
+        setTimeout(typeHero,60);
+    }
+}
+setTimeout(typeHero,500);
+
+const fanLines=[
+    "Beyond the boundaries of reality.",
+    "Crafted with neural precision.",
+    "Experience 8K Ultra-HD clarity.",
+    "Ignite your creative soul today.",
+    "The future of digital art is here.",
+    "Create. Innovate. Dominate."
+];
+const fanContainer=document.getElementById('fanTypewriter');
+let fIndex=0;
+let fStarted=false;
+function typeFan(){
+    if(fIndex<fanLines.length){
+        fanContainer.innerHTML+=fanLines[fIndex]+" ";
+        fIndex++;
+        setTimeout(typeFan,150);
+    }
+}
+
+let observer=new IntersectionObserver((e)=>{
+    e.forEach(n=>{
+        if(n.isIntersecting&&!fStarted){
+            fStarted=true;
+            typeFan();
+        }
+    })
+},{threshold:0.3});
+observer.observe(document.querySelector('.shattered-wrapper'));
+
+</script>
+</body>
+</html>
